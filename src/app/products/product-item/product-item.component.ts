@@ -2,8 +2,10 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Product } from '../product.interface';
 import { CartService } from '../../cart/cart.service';
 import { Observable } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { map, shareReplay, take, tap } from 'rxjs/operators';
 import { CartCountControlsComponent } from '../../core/cart-count-controls/cart-count-controls.component';
+import { ProductsService } from '../products.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-item',
@@ -22,14 +24,23 @@ export class ProductItemComponent implements OnInit {
     | undefined;
 
   countInCart$!: Observable<number>;
+  productIdParam: string;
 
-  constructor(private readonly cartService: CartService) {}
+  constructor(
+    private readonly cartService: CartService,
+    private productService: ProductsService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    this.productIdParam = this.route.snapshot.paramMap.get('id') as string;
+  }
 
   get id(): string {
-    return this.product.id;
+    return this.product?.id;
   }
 
   ngOnInit(): void {
+    this.getProductData();
     this.countInCart$ = this.cartService.cart$.pipe(
       map((cart) => {
         if (!(this.id in cart)) {
@@ -44,6 +55,23 @@ export class ProductItemComponent implements OnInit {
         refCount: true,
       })
     );
+  }
+
+  getProductData(): void {
+    if (this.productIdParam) {
+      this.productService
+        .getProductById(this.productIdParam)
+        .pipe(take(1))
+        .subscribe((product) => {
+          this.product = product as Product;
+        });
+    }
+  }
+
+  navigateToProduct(): void {
+    if (!this.productIdParam) {
+      this.router.navigate([`products/${this.product.id}`]);
+    }
   }
 
   add(): void {
