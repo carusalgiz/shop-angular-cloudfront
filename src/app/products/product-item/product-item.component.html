@@ -5,14 +5,15 @@
     </div>
   </div>
 
-  <header>
+  <header (click)="navigateToProduct()">
     <mat-card-title>
-      {{ product.title }}
+      {{ product?.title }}
     </mat-card-title>
   </header>
 
   <mat-card-content>
-    <p>{{ product.price | number: "1.2-2" | currency }}</p>
+    <p *ngIf="productIdParam">{{ product?.description }}</p>
+    <p>{{ product?.price | number: "1.2-2" | currency }}</p>
   </mat-card-content>
 
   <mat-card-actions>
