@@ -38,7 +38,7 @@ export class ManageProductsComponent implements OnInit {
         this.cdr.markForCheck();
       },
       (error: unknown) => {
-        alert('Error status: ' + error?.status);
+        alert('Error status: ' + (error as HttpErrorResponse)?.status);
       }
     );
   }
