@@ -31,11 +31,14 @@ export class ManageProductsComponent implements OnInit {
       return;
     }
 
-    this.manageProductsService
-      .uploadProductsCSV(this.selectedFile)
-      .subscribe(() => {
+    this.manageProductsService.uploadProductsCSV(this.selectedFile).subscribe(
+      () => {
         this.selectedFile = null;
         this.cdr.markForCheck();
-      });
+      },
+      (error: unknown) => {
+        alert('Error status: ' + error?.status);
+      }
+    );
   }
 }
