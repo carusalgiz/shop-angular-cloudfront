@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Product } from '../../products/product.interface';
@@ -31,11 +32,14 @@ export class ManageProductsComponent implements OnInit {
       return;
     }
 
-    this.manageProductsService
-      .uploadProductsCSV(this.selectedFile)
-      .subscribe(() => {
+    this.manageProductsService.uploadProductsCSV(this.selectedFile).subscribe(
+      () => {
         this.selectedFile = null;
         this.cdr.markForCheck();
-      });
+      },
+      (error: unknown) => {
+        alert('Error status: ' + (error as HttpErrorResponse)?.status);
+      }
+    );
   }
 }
